@@ -1,19 +1,21 @@
 package ru.skypro.lessons.springboot.weblibrary.repository;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Employee;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import ru.skypro.lessons.springboot.weblibrary.entity.Employee;
 
 import java.util.List;
 
-public interface EmployeeRepository {
-    public List<Employee> getAllEmployees();
 
-    public double showSumSalary();
-    public List<Employee> showEmployeeSalaryMin();
-    public List<Employee> showEmployeeSalaryMax();
-    public List<Employee> showEmployeesSalaryAboveAverage();
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
-    public void addEmployees(Employee employee);
-    public void editEmployees(Employee employee);
-    public Employee getEmployeeById(Integer id);
-    public void deleteEmployeeById(Integer id);
-    public List<Employee> getEmployeesWithSalaryHigherThan(double compareSalary);
+    @Query(value = "SELECT * " +
+            "FROM employee e WHERE salary = (SELECT MAX(salary) FROM employee)",
+            nativeQuery = true)
+    List<Employee> findEmployeesWithHighestSalary();
+
+    List<Employee> findEmployeesByPositionNameLike(String position);
+
+    Employee findEmployeeById(Integer id);
+
 }
